@@ -1,120 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Islamic Dua</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f2f2f2;
+margin:0;
+}
+header{
+background:green;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+.dua{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.arabic{
+font-size:22px;
+font-weight:bold;
+}
+input, textarea{
+margin:10px;
+padding:8px;
+width:90%;
+border-radius:8px;
+border:1px solid #ccc;
+}
+button{
+margin:10px;
+padding:10px;
+background:green;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+button:hover{
+background:darkgreen;
+}
+.form-box{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>Islamic Dua 🌙</header>
+
+<input type="text" id="search" placeholder="Search Dua..." onkeyup="searchDua()">
+
+<div class="form-box">
+<h3>➕ Dua Add Karein</h3>
+<input type="text" id="title" placeholder="Dua ka naam">
+<textarea id="arabic" placeholder="Arabic dua"></textarea>
+<input type="text" id="roman" placeholder="Roman English">
+<textarea id="urdu" placeholder="Urdu translation"></textarea>
+<button onclick="addDua()">Add Dua</button>
+</div>
+
+<div id="duaList"></div>
+
+<script>
+
+let duas = JSON.parse(localStorage.getItem("duas")) || [
 {
-title:"Khana Khane Ki Dua",
-arabic:"بِسْمِ اللَّهِ",
-roman:"Bismillah",
-urdu:"Allah ke naam se shuru karta hoon."
-},
-{
-title:"Khana Khane Ke Baad Ki Dua",
-arabic:"الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا",
-roman:"Alhamdulillahillazi at'amana",
-urdu:"Sab tareef Allah ke liye jisne hume khilaya."
-},
-{
-title:"Pani Peene Ki Dua",
-arabic:"اللَّهُمَّ بَارِكْ لَنَا فِيهِ",
-roman:"Allahumma barik lana fihi",
-urdu:"Ay Allah isme barkat ata farma."
-},
-{
-title:"Sone Ki Dua",
-arabic:"اللّهُمَّ بِاسْمِكَ أَمُوتُ وَأَحْيَا",
-roman:"Allahumma bismika amutu wa ahya",
-urdu:"Tere naam se sota hoon aur uthta hoon."
-},
-{
-title:"Uthne Ki Dua",
-arabic:"الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا",
-roman:"Alhamdulillahillazi ahyana",
-urdu:"Sab tareef Allah ke liye jisne hume zinda kiya."
-},
-{
-title:"Ghar Me Dakhil Hone Ki Dua",
+title:"Ghar Mein Dakhil Hone Ki Dua",
 arabic:"بِسْمِ اللَّهِ وَلَجْنَا",
 roman:"Bismillahi walajna",
 urdu:"Allah ke naam se ghar me dakhil hote hain."
-},
-{
-title:"Ghar Se Nikalne Ki Dua",
-arabic:"بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ",
-roman:"Bismillahi tawakkaltu alallah",
-urdu:"Allah ke naam se nikla aur us par bharosa kiya."
-},
-{
-title:"Masjid Me Dakhil Hone Ki Dua",
-arabic:"اللّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
-roman:"Allahumma iftah li abwaba rahmatik",
-urdu:"Ay Allah apni rehmat ke darwaze khol de."
-},
-{
-title:"Masjid Se Nikalne Ki Dua",
-arabic:"اللّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
-roman:"Allahumma inni as’aluka min fadlik",
-urdu:"Ay Allah main tera fazl mangta hoon."
-},
-{
-title:"Safar Ki Dua",
-arabic:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا",
-roman:"Subhanallazi sakhkhara lana haza",
-urdu:"Paak hai woh jisne isko hamare liye musakhar kiya."
-},
-{
-title:"Ilm Me Izafa Ki Dua",
-arabic:"رَبِّ زِدْنِي عِلْمًا",
-roman:"Rabbi zidni ilma",
-urdu:"Ay Rabb mere ilm me izafa farma."
-},
-{
-title:"Wuzu Se Pehle Ki Dua",
-arabic:"بِسْمِ اللَّهِ",
-roman:"Bismillah",
-urdu:"Allah ke naam se wuzu shuru karta hoon."
-},
-{
-title:"Wuzu Ke Baad Ki Dua",
-arabic:"أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ",
-roman:"Ashhadu an la ilaha illallah",
-urdu:"Gawahi deta hoon ke Allah ke siwa koi mabood nahi."
-},
-{
-title:"Namaz Ke Baad Ki Dua",
-arabic:"اللّهُمَّ أَنْتَ السَّلَامُ",
-roman:"Allahumma anta as-salam",
-urdu:"Ay Allah tu hi salam hai."
-},
-{
-title:"Subah Ki Dua",
-arabic:"اللّهُمَّ بِكَ أَصْبَحْنَا",
-roman:"Allahumma bika asbahna",
-urdu:"Ay Allah tere naam se humne subah ki."
-},
-{
-title:"Shaam Ki Dua",
-arabic:"اللّهُمَّ بِكَ أَمْسَيْنَا",
-roman:"Allahumma bika amsayna",
-urdu:"Ay Allah tere naam se humne shaam ki."
-},
-{
-title:"Maafi Ki Dua",
-arabic:"رَبِّ اغْفِرْ لِي",
-roman:"Rabbi ghfir li",
-urdu:"Ay Rabb mujhe maaf farma."
-},
-{
-title:"Parents Ke Liye Dua",
-arabic:"رَبِّ ارْحَمْهُمَا",
-roman:"Rabbi irhamhuma",
-urdu:"Ay Rabb un par reham farma."
-},
-{
-title:"Hifazat Ki Dua",
-arabic:"حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
-roman:"Hasbunallahu wa ni’mal wakeel",
-urdu:"Allah hamare liye kaafi hai."
-},
-{
-title:"Tension Door Hone Ki Dua",
-arabic:"لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
-roman:"La hawla wala quwwata illa بالله",
-urdu:"Allah ke siwa koi taqat nahi."
 }
+];
+
+function saveDuas(){
+localStorage.setItem("duas", JSON.stringify(duas));
+}
+
+function loadDuas(filter=""){
+let container = document.getElementById("duaList");
+container.innerHTML="";
+
+duas.forEach((d,index)=>{
+if(
+d.title.toLowerCase().includes(filter) ||
+d.roman.toLowerCase().includes(filter) ||
+d.urdu.toLowerCase().includes(filter)
+){
+container.innerHTML += `
+<div class="dua">
+<h3>${d.title}</h3>
+<p class="arabic">${d.arabic}</p>
+<p>${d.roman}</p>
+<p>${d.urdu}</p>
+<button onclick="deleteDua(${index})">Delete</button>
+</div>`;
+}
+});
+}
+
+function searchDua(){
+let value=document.getElementById("search").value.toLowerCase();
+loadDuas(value);
+}
+
+function addDua(){
+let title=document.getElementById("title").value.trim();
+let arabic=document.getElementById("arabic").value.trim();
+let roman=document.getElementById("roman").value.trim();
+let urdu=document.getElementById("urdu").value.trim();
+
+if(title && arabic && roman && urdu){
+duas.push({title, arabic, roman, urdu});
+saveDuas();
+loadDuas();
+document.getElementById("title").value="";
+document.getElementById("arabic").value="";
+document.getElementById("roman").value="";
+document.getElementById("urdu").value="";
+alert("Dua add ho gayi ✅");
+}else{
+alert("Sab fields fill karein ⚠️");
+}
+}
+
+function deleteDua(index){
+duas.splice(index,1);
+saveDuas();
+loadDuas();
+}
+
+loadDuas();
+
+</script>
+
+</body>
+</html>
